@@ -17,4 +17,16 @@ class Question extends Model
     public function status() {
     	return $this->belongsTo('App\QuestionStatus');
     }
+
+    public function scopeNew($query) {
+    	return $query->where('status_id', QuestionStatus::STATUS_NEW);
+    }
+
+    public function scopeHidden($query) {
+    	return $query->where('status_id', QuestionStatus::STATUS_HIDDEN);
+    }
+
+    public function scopePublished($query) {
+    	return $query->where('status_id', QuestionStatus::STATUS_PUBLISHED);
+    }
 }

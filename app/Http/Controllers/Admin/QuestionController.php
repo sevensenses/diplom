@@ -10,87 +10,26 @@ use App\QuestionStatus;
 class QuestionController extends Controller
 {
 
-	public function __construct()
-    {
-        
-    }
-
-    public function list(Request $request) {
-    	$tableHeaders = ['Вопрос','Категория','Статус','Дата создания'];
-    	$tableRows = [];
-
-    	$questions = Question::with(['status','category']);
-
-    	if($request->has('status')) {
-    		$questions->where('status_id', $request->input('status'));
-    	}
-
-    	if($request->has('category')) {
-    		$questions->where('category_id', $request->input('category'));
-    	}
-
-    	foreach($questions->get() as $question) {
-    		$tableRows[$question->id] = [
-    			$question->question,
-    			$question->category->name,
-    			$question->status->name,
-    			$question->created_at,
-    		];
-    	}
-
-    	return view('admin.list', [
+    public function index() {
+    	return view('admin.questions.index', [
     		'pagetitle' => 'Список вопросов',
     		'menu' => collect($this->makeMenu()),
     		'breadcrumbs' => collect($this->makeBreadCrumbs()),
-    		'model' => 'question',
-    		'tableHeaders' => $tableHeaders,
-    		'tableRows' => $tableRows,
+    		'questions' =>  Question::with(['status','category'])->get(),
     	]);
     }
 
-    public function createForm(Request $request) {
-    	$fields = [
-    		[
-    			'name' => 'question',
-    			'title' => 'Вопрос',
-    		],
-    		[
-    			'type' => 'select',
-    			'name' => 'category_id',
-    			'title' => 'Категория',
-    			'values' => Category::pluck('name', 'id'),
-    		],
-    		[
-    			'name' => 'user_name',
-    			'title' => 'Имя пользователя',
-    		],
-    		[
-    			'name' => 'user_email',
-    			'title' => 'E-mail пользователя',
-    		],
-    		[
-    			'type' => 'select',
-    			'name' => 'status_id',
-    			'title' => 'Статус',
-    			'values' => QuestionStatus::pluck('name', 'id'),
-    		],
-    		[
-    			'type' => 'textarea',
-    			'name' => 'answer',
-    			'title' => 'Ответ',
-    		],
-    	];
-
-    	return view('admin.create', [
+    public function create() {
+    	return view('admin.questions.create', [
     		'pagetitle' => 'Создать вопрос',
     		'menu' => collect($this->makeMenu()),
     		'breadcrumbs' => collect($this->makeBreadCrumbs()),
-    		'model' => 'question',
-    		'fields' => $fields,
+    		'categories' => Category::pluck('name', 'id'),
+            'statuses' => QuestionStatus::pluck('name', 'id'),
     	]);
     }
 
-    public function create(Request $request) {
+    public function store(Request $request) {
     	$this->validate($request, [
     		'question' => 'required|min:10',
     		'category_id' => 'required|exists:categories,id',
@@ -107,62 +46,22 @@ class QuestionController extends Controller
 
     	$question = Question::create($request->all());
 
-    	return redirect()->route('admin.edit', ['model' => 'question', 'id' => $question->id])
+    	return redirect()->route('admin.questions.edit', $question->id)
     		->with('success', 'Вопрос успешно создан');
     }
 
-    public function editForm(Request $request, $id) {
-    	$question = Question::findOrFail($id);
-
-    	$fields = [
-    		[
-    			'name' => 'question',
-    			'title' => 'Вопрос',
-    			'value' => $question->question,
-    		],
-    		[
-    			'type' => 'select',
-    			'name' => 'category_id',
-    			'title' => 'Категория',
-    			'values' => Category::pluck('name', 'id'),
-    			'value' => $question->category_id,
-    		],
-    		[
-    			'name' => 'user_name',
-    			'title' => 'Имя пользователя',
-    			'value' => $question->user_name,
-    		],
-    		[
-    			'name' => 'user_email',
-    			'title' => 'E-mail пользователя',
-    			'value' => $question->user_email,
-    		],
-    		[
-    			'type' => 'select',
-    			'name' => 'status_id',
-    			'title' => 'Статус',
-    			'values' => QuestionStatus::pluck('name', 'id'),
-    			'value' => $question->status_id,
-    		],
-    		[
-    			'type' => 'textarea',
-    			'name' => 'answer',
-    			'title' => 'Ответ',
-    			'value' => $question->answer,
-    		],
-    	];
-
-    	return view('admin.edit', [
-    		'id' => $id,
+    public function edit($id) {
+    	return view('admin.questions.edit', [
     		'pagetitle' => 'Редактировать вопрос',
     		'menu' => collect($this->makeMenu()),
     		'breadcrumbs' => collect($this->makeBreadCrumbs()),
-    		'model' => 'question',
-    		'fields' => $fields,
+            'question' => Question::findOrFail($id),
+            'categories' => Category::pluck('name', 'id'),
+            'statuses' => QuestionStatus::pluck('name', 'id'),
     	]);
     }
 
-    public function edit(Request $request, $id) {
+    public function update(Request $request, $id) {
     	$question = Question::findOrFail($id);
 
     	$this->validate($request, [
@@ -182,11 +81,11 @@ class QuestionController extends Controller
     	$question->fill($request->all());
     	$question->save();
 
-    	return redirect()->route('admin.edit', ['model' => 'question', 'id' => $id])
+    	return redirect()->route('admin.questions.edit', $id)
     		->with('success', 'Вопрос успешно изменен');
     }
 
-    public function remove(Request $request, $id) {
+    public function destroy($id) {
     	Question::destroy($id);
 
     	return redirect()->back();
@@ -195,7 +94,7 @@ class QuestionController extends Controller
     protected function makeBreadCrumbs() {
     	$breadcrumbs = parent::makeBreadCrumbs();
 
-    	$breadcrumbs[] = ['name' => 'Вопросы','url' => route('admin.list', ['model' => 'question'])];
+    	$breadcrumbs[] = ['name' => 'Вопросы','url' => route('admin.questions.index')];
 
     	return $breadcrumbs;
     }

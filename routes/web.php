@@ -25,30 +25,18 @@ Route::group([
 	'middleware' => ['auth'],
 ], function () {
 
-	Route::get('', 'Controller@index')->name('dashboard');
+	Route::get('', 'DashboardController@index')->name('dashboard');
 
-	Route::get('{model}/list', function (Request $request, $model) { 
-		return \App::call('App\Http\Controllers\Admin\\' . studly_case($model) . 'Controller@list'); 
-	})->name('list');
+	Route::get('categories/{categories}/questions/new', 'CategoryQuestionController@new')->name('categories.questions.new');
+	Route::get('categories/{categories}/questions/hidden', 'CategoryQuestionController@hidden')->name('categories.questions.hidden');
+	Route::get('categories/{categories}/questions/published', 'CategoryQuestionController@published')->name('categories.questions.published');
 
-	Route::get('{model}/create', function (Request $request, $model) { 
-		return \App::call('App\Http\Controllers\Admin\\' . studly_case($model) . 'Controller@createForm'); 
-	})->name('create.form');
+	Route::resources([
+		'users' => 'UserController',
+		'categories' => 'CategoryController',
+		'questions' => 'QuestionController',
+	]);
 
-	Route::post('{model}/create', function (Request $request, $model) { 
-		return \App::call('App\Http\Controllers\Admin\\' . studly_case($model) . 'Controller@create'); 
-	})->name('create');
-
-	Route::get('{model}/edit/{id}', function (Request $request, $model, $id) { 
-		return \App::call('App\Http\Controllers\Admin\\' . studly_case($model) . 'Controller@editForm', [$id]); 
-	})->name('edit.form');
-
-	Route::post('{model}/edit/{id}', function (Request $request, $model, $id) { 
-		return \App::call('App\Http\Controllers\Admin\\' . studly_case($model) . 'Controller@edit', [$id]); 
-	})->name('edit');
-
-	Route::any('{model}/remove/{id}', function (Request $request, $model, $id) { 
-		return \App::call('App\Http\Controllers\Admin\\' . studly_case($model) . 'Controller@remove', [$id]); 
-	})->name('remove');
+	Route::resource('categories.questions', 'CategoryQuestionController')->only(['index']);
 
 });

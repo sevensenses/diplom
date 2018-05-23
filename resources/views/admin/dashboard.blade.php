@@ -7,7 +7,7 @@
 @section('content')
 <!-- Navigation-->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
-    <a class="navbar-brand" href="index.html">Панель управления</a>
+    <a class="navbar-brand" href="{{ route('admin.dashboard') }}">Панель управления</a>
     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -28,7 +28,7 @@
 		<li class="nav-item">
 			<a class="nav-link" data-toggle="modal" data-target="#exampleModal">
 				<i class="fa fa-fw fa-sign-out"></i>
-				Logout
+				Выход
 			</a>
 		</li>
       </ul>
@@ -52,7 +52,7 @@
               </div>
               <div class="mr-5">{{ $questionNewCount ?? 0 }} новых вопросов!</div>
             </div>
-            <a class="card-footer text-white clearfix small z-1" href="{{ route('admin.list', ['model' => 'question', 'status' => \App\QuestionStatus::STATUS_NEW]) }}">
+            <a class="card-footer text-white clearfix small z-1" href="{{ route('admin.questions.index', ['status' => \App\QuestionStatus::STATUS_NEW]) }}">
               <span class="float-left">Просмотреть</span>
               <span class="float-right">
                 <i class="fa fa-angle-right"></i>

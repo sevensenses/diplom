@@ -12,47 +12,6 @@ use App\Question;
 class Controller extends BaseController
 {
 	use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        
-    }
-
-    public function index(Request $request) {
-    	return view('admin.dashboard', [
-    		'menu' => collect($this->makeMenu()),
-    		'breadcrumbs' => collect($this->makeBreadCrumbs()),
-    		'questionNewCount' => Question::whereNull('answer')->count(),
-    	]);
-    }
-
-    public function list(Request $request) {
-
-    }
-
-    public function createForm(Request $request) {
-    	
-    }
-
-    public function create(Request $request) {
-    	
-    }
-
-    public function editForm(Request $request, $id) {
-    	
-    }
-
-    public function edit(Request $request, $id) {
-    	
-    }
-
-    public function remove(Request $request, $id) {
-    	
-    }
 
     protected function makeMenu() {
     	return [
@@ -63,17 +22,17 @@ class Controller extends BaseController
     		],
     		[
     			'name' => 'Пользователи',
-    			'url' => route('admin.list', ['model' => 'user']),
+    			'url' => route('admin.users.index'),
     			'icon' => 'fa fa-users',
     		],
     		[
     			'name' => 'Категории',
-    			'url' => route('admin.list', ['model' => 'category']),
+    			'url' => route('admin.categories.index'),
     			'icon' => 'fa fa-folder-open',
     		],
     		[
     			'name' => 'Вопросы',
-    			'url' => route('admin.list', ['model' => 'question']),
+    			'url' => route('admin.questions.index'),
     			'icon' => 'fa fa-comment',
     		],
     	];

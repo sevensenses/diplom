@@ -13,4 +13,16 @@ class Category extends Model
     public function questions() {
     	return $this->hasMany('App\Question');
     }
+
+    public function newQuestions() {
+    	return $this->hasMany('App\Question')->new();
+    }
+
+    public function hiddenQuestions() {
+    	return $this->hasMany('App\Question')->hidden();
+    }
+
+    public function publishedQuestions() {
+    	return $this->hasMany('App\Question')->published();
+    }
 }
