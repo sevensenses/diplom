@@ -8,11 +8,20 @@ use App\Question;
 class DashboardController extends Controller
 {
 
+    protected $breadcrumbs;
+
+    function __construct () {
+        $this->breadcrumbs = collect([
+            ['name' => 'Панель управления', 'url' => route('admin.dashboard')],
+        ]);
+    }
+
     public function index() {
+    	$questionNewCount = Question::new()->count();
+    	
         return view('admin.dashboard', [
-            'menu' => collect($this->makeMenu()),
-            'breadcrumbs' => collect($this->makeBreadCrumbs()),
-            'questionNewCount' => Question::new()->count(),
+            'breadcrumbs' => $this->breadcrumbs,
+            'questionNewCount' => $questionNewCount,
         ]);
     }
 

@@ -13,7 +13,7 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
-      	@each('admin.components.menu', $menu, 'item')
+      	@each('admin.components.menu', config('menu'), 'item')
       </ul>
 
       <ul class="navbar-nav sidenav-toggler">

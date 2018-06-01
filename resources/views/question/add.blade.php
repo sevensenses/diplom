@@ -7,8 +7,7 @@
         <div class="alert alert-danger">В форме содержатся ошибки</div>
     @endif
 
-	<form action="{{ route('question.add') }}" method="post">
-		{!! Form::open(['route' => 'question.add']) !!}
+	{!! Form::open(['route' => 'question.store']) !!}
 		
 		{!! Form::token() !!}
 

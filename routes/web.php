@@ -16,7 +16,7 @@ Auth::routes();
 Route::get('/', 'HomeController@index')->name('home');
 
 Route::get('/question', 'HomeController@question')->name('question.add');
-Route::post('/question', 'HomeController@create')->name('question.add');
+Route::post('/question', 'HomeController@create')->name('question.store');
 
 Route::group([
 	'as' => 'admin.',
@@ -27,9 +27,9 @@ Route::group([
 
 	Route::get('', 'DashboardController@index')->name('dashboard');
 
-	Route::get('categories/{categories}/questions/new', 'CategoryQuestionController@new')->name('categories.questions.new');
-	Route::get('categories/{categories}/questions/hidden', 'CategoryQuestionController@hidden')->name('categories.questions.hidden');
-	Route::get('categories/{categories}/questions/published', 'CategoryQuestionController@published')->name('categories.questions.published');
+	Route::get('categories/{category}/questions/new', 'CategoryQuestionController@new')->name('categories.questions.new');
+	Route::get('categories/{category}/questions/hidden', 'CategoryQuestionController@hidden')->name('categories.questions.hidden');
+	Route::get('categories/{category}/questions/published', 'CategoryQuestionController@published')->name('categories.questions.published');
 
 	Route::resources([
 		'users' => 'UserController',
@@ -37,6 +37,6 @@ Route::group([
 		'questions' => 'QuestionController',
 	]);
 
-	Route::resource('categories.questions', 'CategoryQuestionController')->only(['index']);
+	Route::get('categories/{category}/questions', 'CategoryQuestionController@index')->name('categories.questions.index');
 
 });

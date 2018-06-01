@@ -2,86 +2,93 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Question;
 use App\Category;
 use App\QuestionStatus;
+use App\Http\Requests\StoreQuestion;
+use App\Http\Requests\UpdateQuestion;
 
 class QuestionController extends Controller
 {
 
+    protected $breadcrumbs;
+
+    function __construct () {
+        $this->breadcrumbs = collect([
+            ['name' => 'Панель управления', 'url' => route('admin.dashboard')],
+            ['name' => 'Вопросы','url' => route('admin.questions.index')],
+        ]);
+    }
+
     public function index() {
+        $questions = Question::with(['status','category'])->get();
+
     	return view('admin.questions.index', [
     		'pagetitle' => 'Список вопросов',
-    		'menu' => collect($this->makeMenu()),
-    		'breadcrumbs' => collect($this->makeBreadCrumbs()),
-    		'questions' =>  Question::with(['status','category'])->get(),
+    		'breadcrumbs' => $this->breadcrumbs,
+    		'questions' => $questions,
     	]);
     }
 
     public function create() {
+        $categories = Category::pluck('name', 'id');
+        $statuses = QuestionStatus::pluck('name', 'id');
+
     	return view('admin.questions.create', [
     		'pagetitle' => 'Создать вопрос',
-    		'menu' => collect($this->makeMenu()),
-    		'breadcrumbs' => collect($this->makeBreadCrumbs()),
-    		'categories' => Category::pluck('name', 'id'),
-            'statuses' => QuestionStatus::pluck('name', 'id'),
+            'breadcrumbs' => $this->breadcrumbs,
+    		'categories' => $categories,
+            'statuses' => $statuses,
     	]);
     }
 
-    public function store(Request $request) {
-    	$this->validate($request, [
-    		'question' => 'required|min:10',
-    		'category_id' => 'required|exists:categories,id',
-            'user_name' => 'required|min:3',
-            'user_email' => 'required|email',
-    		'status_id' => 'required|exists:question_statuses,id',
-    	]);
+    public function store(StoreQuestion $request) {
+        $questionData = $request->all();
 
-    	if(empty($request->input('answer', null))) {
-    		$request->merge(['status_id' => QuestionStatus::STATUS_NEW]);
-    	} elseif($request->input('status_id', QuestionStatus::STATUS_NEW) != QuestionStatus::STATUS_HIDDEN) {
-    		$request->merge(['status_id' => QuestionStatus::STATUS_PUBLISHED]);
-    	}
+        // Не уверен как тут реализовать правильнее
+        if(empty($questionData['answer'])) {
+            // Если ответ не указан, то выставляем статус "новый"
+            $questionData['status_id'] = QuestionStatus::STATUS_NEW;
+        } elseif($questionData['status_id'] != QuestionStatus::STATUS_HIDDEN) {
+            // Если ответ указан, и не выставлен статус "скрытый", то опубликовываем ответ
+            $questionData['status_id'] = QuestionStatus::STATUS_PUBLISHED;
+        }
 
-    	$question = Question::create($request->all());
+    	$question = Question::create($questionData);
 
     	return redirect()->route('admin.questions.edit', $question->id)
     		->with('success', 'Вопрос успешно создан');
     }
 
-    public function edit($id) {
+    public function edit(Question $question) {
+        $categories = Category::pluck('name', 'id');
+        $statuses = QuestionStatus::pluck('name', 'id');
+
     	return view('admin.questions.edit', [
     		'pagetitle' => 'Редактировать вопрос',
-    		'menu' => collect($this->makeMenu()),
-    		'breadcrumbs' => collect($this->makeBreadCrumbs()),
-            'question' => Question::findOrFail($id),
-            'categories' => Category::pluck('name', 'id'),
-            'statuses' => QuestionStatus::pluck('name', 'id'),
+            'breadcrumbs' => $this->breadcrumbs,
+            'question' => $question,
+            'categories' => $categories,
+            'statuses' => $statuses,
     	]);
     }
 
-    public function update(Request $request, $id) {
-    	$question = Question::findOrFail($id);
+    public function update(UpdateQuestion $request, Question $question) {
+        $questionData = $request->all();
 
-    	$this->validate($request, [
-    		'question' => 'required|min:10',
-    		'category_id' => 'required|exists:categories,id',
-            'user_name' => 'required|min:3',
-            'user_email' => 'required|email',
-    		'status_id' => 'required|exists:question_statuses,id',
-    	]);
+        // Не уверен как тут реализовать правильнее
+        if(empty($questionData['answer'])) {
+            // Если ответ не указан, то выставляем статус "новый"
+            $questionData['status_id'] = QuestionStatus::STATUS_NEW;
+        } elseif($questionData['status_id'] != QuestionStatus::STATUS_HIDDEN) {
+            // Если ответ указан, и не выставлен статус "скрытый", то опубликовываем ответ
+            $questionData['status_id'] = QuestionStatus::STATUS_PUBLISHED;
+        }
 
-    	if(empty($request->input('answer', null))) {
-    		$request->merge(['status_id' => QuestionStatus::STATUS_NEW]);
-    	} elseif($request->input('status_id', QuestionStatus::STATUS_NEW) != QuestionStatus::STATUS_HIDDEN) {
-    		$request->merge(['status_id' => QuestionStatus::STATUS_PUBLISHED]);
-    	}
-
-    	$question->fill($request->all());
+    	$question->fill($questionData);
     	$question->save();
 
-    	return redirect()->route('admin.questions.edit', $id)
+    	return redirect()->route('admin.questions.edit', $question->id)
     		->with('success', 'Вопрос успешно изменен');
     }
 
@@ -89,14 +96,6 @@ class QuestionController extends Controller
     	Question::destroy($id);
 
     	return redirect()->back();
-    }
-
-    protected function makeBreadCrumbs() {
-    	$breadcrumbs = parent::makeBreadCrumbs();
-
-    	$breadcrumbs[] = ['name' => 'Вопросы','url' => route('admin.questions.index')];
-
-    	return $breadcrumbs;
     }
 
 }

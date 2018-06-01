@@ -2,63 +2,60 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Category;
 use App\QuestionStatus;
+use App\Http\Requests\StoreCategory;
+use App\Http\Requests\UpdateCategory;
 
 class CategoryController extends Controller
 {
 
+    protected $breadcrumbs;
+
+    function __construct () {
+        $this->breadcrumbs = collect([
+            ['name' => 'Панель управления', 'url' => route('admin.dashboard')],
+            ['name' => 'Категории', 'url' => route('admin.categories.index')],
+        ]);
+    }
+
     public function index() {
+        $categories = Category::withCount(['newQuestions', 'hiddenQuestions', 'questions'])->get();
+
     	return view('admin.categories.index', [
     		'pagetitle' => 'Список категорий',
-    		'menu' => collect($this->makeMenu()),
-    		'breadcrumbs' => collect($this->makeBreadCrumbs()),
-            'categories' => Category::withCount(['newQuestions', 'hiddenQuestions', 'questions'])->get(),
+    		'breadcrumbs' => $this->breadcrumbs,
+            'categories' => $categories,
     	]);
     }
 
     public function create() {
     	return view('admin.categories.create', [
     		'pagetitle' => 'Создать категорию',
-    		'menu' => collect($this->makeMenu()),
-    		'breadcrumbs' => collect($this->makeBreadCrumbs()),
+    		'breadcrumbs' => $this->breadcrumbs,
     	]);
     }
 
-    public function store(Request $request) {
-    	$this->validate($request, [
-    		'name' => 'required|unique:categories,name',
-    		'active' => 'in:0,1',
-    	]);
-
+    public function store(StoreCategory $request) {
     	$category = Category::create($request->all());
 
     	return redirect()->route('admin.categories.edit', $category->id)
     		->with('success', 'Категория успешно создана');
     }
 
-    public function edit($id) {
+    public function edit(Category $category) {
     	return view('admin.categories.edit', [
     		'pagetitle' => 'Редактировать Категорию',
-    		'menu' => collect($this->makeMenu()),
-    		'breadcrumbs' => collect($this->makeBreadCrumbs()),
-    		'category' => Category::findOrFail($id),
+    		'breadcrumbs' => $this->breadcrumbs,
+    		'category' => $category,
     	]);
     }
 
-    public function update(Request $request, $id) {
-    	$category = Category::findOrFail($id);
-
-    	$this->validate($request, [
-    		'name' => 'required|unique:categories,name,' . $id,
-    		'active' => 'in:0,1',
-    	]);
-
+    public function update(UpdateCategory $request, Category $category) {
     	$category->fill($request->all());
     	$category->save();
 
-    	return redirect()->route('admin.categories.edit', $id)
+    	return redirect()->route('admin.categories.edit', $category)
     		->with('success', 'Категория успешно изменена');
     }
 
@@ -66,14 +63,6 @@ class CategoryController extends Controller
     	Category::destroy($id);
 
     	return redirect()->back();
-    }
-
-    protected function makeBreadCrumbs() {
-    	$breadcrumbs = parent::makeBreadCrumbs();
-
-    	$breadcrumbs[] = ['name' => 'Категории','url' => route('admin.categories.index')];
-
-    	return $breadcrumbs;
     }
 
 }
