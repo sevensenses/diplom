@@ -1,6 +1,12 @@
 @extends('admin.dashboard')
 
 @section('admin-content')
+
+<!-- Breadcrumbs-->
+<ol class="breadcrumb">
+    {{ Breadcrumbs::render('users') }}
+</ol>
+
 <div class="card mb-3">
 <div class="card-header">
 	<a href="{{ route('admin.users.create') }}" class="btn btn-success">

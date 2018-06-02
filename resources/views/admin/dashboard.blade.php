@@ -37,11 +37,11 @@
 
   <div class="content-wrapper">
     <div class="container-fluid">
+      @section('admin-content')
       <!-- Breadcrumbs-->
       <ol class="breadcrumb">
-      	@each('admin.components.breadcrumb', $breadcrumbs, 'breadcrumb')
+        {{ Breadcrumbs::render('dashboard') }}
       </ol>
-      @section('admin-content')
       <!-- Icon Cards-->
       <div class="row">
         <div class="col-xl-3 col-sm-6 mb-3">
@@ -52,7 +52,7 @@
               </div>
               <div class="mr-5">{{ $questionNewCount ?? 0 }} новых вопросов!</div>
             </div>
-            <a class="card-footer text-white clearfix small z-1" href="{{ route('admin.questions.index', ['status' => \App\QuestionStatus::STATUS_NEW]) }}">
+            <a class="card-footer text-white clearfix small z-1" href="{{ route('admin.questions.new') }}">
               <span class="float-left">Просмотреть</span>
               <span class="float-right">
                 <i class="fa fa-angle-right"></i>

@@ -2,23 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Category;
 use App\Question;
 use App\QuestionStatus;
+use App\Http\Requests\StoreNewQuestion;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        
-    }
-
     /**
      * Show the application dashboard.
      *
@@ -26,7 +16,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $menu = $this->getMenu();
+        $menu = Category::active()->has('publishedQuestions')->get();
 
         return view('home', [
             'menu' => $menu,
@@ -38,37 +28,24 @@ class HomeController extends Controller
 
     public function question() 
     {
-        $categories = Category::where('active', true)->get();
+        $menu = Category::active()->has('publishedQuestions')->get();
+        $categories = Category::active()->get();
 
         return view('question.add', [
-            'menu' => $this->getMenu(),
+            'menu' => $menu,
             'categories' => $categories,
         ]);
     }
 
-    public function create(Request $request) {
-        $this->validate($request, [
-            'question' => 'required|min:10',
-            'user_name' => 'required|min:3',
-            'user_email' => 'required|email',
-            'category_id' => 'required|exists:categories,id',
-        ]);
+    public function create(StoreNewQuestion $request) {
+        $menu = Category::active()->has('publishedQuestions')->get();
 
         $question = new Question($request->all());
         $question->status_id = QuestionStatus::STATUS_NEW;
         $question->save();
 
         return view('question.success', [
-            'menu' => $this->getMenu(),
+            'menu' => $menu,
         ]);
-    }
-
-    private function getMenu() {
-        return Category::where('active', true)
-            ->whereHas('questions', function ($query) {
-                $query->where('status_id', QuestionStatus::STATUS_PUBLISHED)
-                ->whereNotNull('answer');
-            })
-            ->get();
     }
 }

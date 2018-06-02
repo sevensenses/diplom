@@ -2,6 +2,11 @@
 
 @section('admin-content')
 
+<!-- Breadcrumbs-->
+<ol class="breadcrumb">
+    {{ Breadcrumbs::render('questions.edit', $question) }}
+</ol>
+
 {!! Form::open(['route' => ['admin.questions.update', $question->id], 'method' => 'put']) !!}
 
     {!! Form::token() !!}

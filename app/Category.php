@@ -25,4 +25,8 @@ class Category extends Model
     public function publishedQuestions() {
     	return $this->hasMany('App\Question')->published();
     }
+
+    public function scopeActive($query) {
+        return $query->where('active', true);
+    }
 }

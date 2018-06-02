@@ -1,6 +1,12 @@
 @extends('admin.dashboard')
 
 @section('admin-content')
+
+<!-- Breadcrumbs-->
+<ol class="breadcrumb">
+    {{ Breadcrumbs::render('categories') }}
+</ol>
+
 <div class="card mb-3">
 <div class="card-header">
 	<a href="{{ route('admin.categories.create') }}" class="btn btn-success">

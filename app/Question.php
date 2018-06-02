@@ -29,4 +29,24 @@ class Question extends Model
     public function scopePublished($query) {
     	return $query->where('status_id', QuestionStatus::STATUS_PUBLISHED);
     }
+
+    public function isNew() {
+        return $this->status_id == QuestionStatus::STATUS_NEW;
+    }
+
+    public function isHidden() {
+        return $this->status_id == QuestionStatus::STATUS_HIDDEN;
+    }
+
+    public function isPublished() {
+        return $this->status_id == QuestionStatus::STATUS_PUBLISHED;
+    }
+
+    public function correctStatus() {
+        if(empty($this->answer)) {
+            $this->status_id = QuestionStatus::STATUS_NEW;
+        } elseif(!$this->isHidden()) {
+            $this->status_id = QuestionStatus::STATUS_PUBLISHED;
+        }
+    }
 }

@@ -31,6 +31,8 @@ Route::group([
 	Route::get('categories/{category}/questions/hidden', 'CategoryQuestionController@hidden')->name('categories.questions.hidden');
 	Route::get('categories/{category}/questions/published', 'CategoryQuestionController@published')->name('categories.questions.published');
 
+	Route::get('questions/new', 'QuestionController@new')->name('questions.new');
+
 	Route::resources([
 		'users' => 'UserController',
 		'categories' => 'CategoryController',

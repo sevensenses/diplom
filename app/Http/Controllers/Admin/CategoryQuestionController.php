@@ -9,16 +9,6 @@ use App\QuestionStatus;
 
 class CategoryQuestionController extends Controller
 {
-
-    protected $breadcrumbs;
-
-    function __construct () {
-        $this->breadcrumbs = collect([
-            ['name' => 'Панель управления', 'url' => route('admin.dashboard')],
-            ['name' => 'Вопросы','url' => route('admin.questions.index')],
-        ]);
-    }
-
     public function index($categoryId) {
         $questions = Question::with(['status','category'])
             ->where('category_id', $categoryId)
@@ -26,7 +16,6 @@ class CategoryQuestionController extends Controller
 
     	return view('admin.questions.index', [
     		'pagetitle' => 'Список вопросов',
-    		'breadcrumbs' => $this->breadcrumbs,
     		'questions' =>  $questions,
     	]);
     }
@@ -39,7 +28,6 @@ class CategoryQuestionController extends Controller
 
         return view('admin.questions.index', [
             'pagetitle' => 'Список вопросов',
-            'breadcrumbs' => $this->breadcrumbs,
             'questions' => $questions,
         ]);
     }
@@ -52,7 +40,6 @@ class CategoryQuestionController extends Controller
 
         return view('admin.questions.index', [
             'pagetitle' => 'Список вопросов',
-            'breadcrumbs' => $this->breadcrumbs,
             'questions' => $questions,
         ]);
     }
@@ -65,7 +52,6 @@ class CategoryQuestionController extends Controller
 
         return view('admin.questions.index', [
             'pagetitle' => 'Список вопросов',
-            'breadcrumbs' => $this->breadcrumbs,
             'questions' => $questions,
         ]);
     }

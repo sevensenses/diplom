@@ -8,22 +8,11 @@ use App\Http\Requests\UpdateUser;
 
 class UserController extends Controller
 {
-
-    protected $breadcrumbs;
-
-    function __construct () {
-        $this->breadcrumbs = collect([
-            ['name' => 'Панель управления', 'url' => route('admin.dashboard')],
-            ['name' => 'Пользователи','url' => route('admin.users.index')],
-        ]);
-    }
-
     public function index() {
         $users = User::all();
 
     	return view('admin.users.index', [
     		'pagetitle' => 'Список пользователей',
-            'breadcrumbs' => $this->breadcrumbs,
     		'users' => $users,
     	]);
     }
@@ -31,7 +20,6 @@ class UserController extends Controller
     public function create() {
     	return view('admin.users.create', [
     		'pagetitle' => 'Создать пользователя',
-            'breadcrumbs' => $this->breadcrumbs,
     	]);
     }
 
@@ -50,7 +38,6 @@ class UserController extends Controller
     	return view('admin.users.edit', [
     		'user' => $user,
     		'pagetitle' => 'Редактировать пользователя',
-            'breadcrumbs' => $this->breadcrumbs,
     	]);
     }
 
