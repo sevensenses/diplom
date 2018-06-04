@@ -2,11 +2,6 @@
 
 @section('admin-content')
 
-<!-- Breadcrumbs-->
-<ol class="breadcrumb">
-    {{ Breadcrumbs::render('questions') }}
-</ol>
-
 <div class="card mb-3">
 <div class="card-header">
 	<a href="{{ route('admin.questions.create') }}" class="btn btn-success">

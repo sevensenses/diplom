@@ -2,11 +2,6 @@
 
 @section('admin-content')
 
-<!-- Breadcrumbs-->
-<ol class="breadcrumb">
-    {{ Breadcrumbs::render('categories.edit', $category) }}
-</ol>
-
 {!! Form::open(['route' => ['admin.categories.update', $category->id], 'method' => 'put']) !!}
 
     {!! Form::token() !!}

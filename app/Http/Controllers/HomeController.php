@@ -16,7 +16,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $menu = Category::active()->has('publishedQuestions')->get();
+        $menu = Category::active()->withOnlyPublishedQuestions()->get();
 
         return view('home', [
             'menu' => $menu,
@@ -28,7 +28,7 @@ class HomeController extends Controller
 
     public function question() 
     {
-        $menu = Category::active()->has('publishedQuestions')->get();
+        $menu = Category::active()->withOnlyPublishedQuestions()->get();
         $categories = Category::active()->get();
 
         return view('question.add', [
@@ -38,7 +38,7 @@ class HomeController extends Controller
     }
 
     public function create(StoreNewQuestion $request) {
-        $menu = Category::active()->has('publishedQuestions')->get();
+        $menu = Category::active()->withOnlyPublishedQuestions()->get();
 
         $question = new Question($request->all());
         $question->status_id = QuestionStatus::STATUS_NEW;

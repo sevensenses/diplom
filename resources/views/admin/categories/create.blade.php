@@ -2,11 +2,6 @@
 
 @section('admin-content')
 
-<!-- Breadcrumbs-->
-<ol class="breadcrumb">
-    {{ Breadcrumbs::render('categories.create') }}
-</ol>
-
 {!! Form::open(['route' => 'admin.categories.store']) !!}
 
     {!! Form::token() !!}

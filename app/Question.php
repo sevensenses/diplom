@@ -49,4 +49,10 @@ class Question extends Model
             $this->status_id = QuestionStatus::STATUS_PUBLISHED;
         }
     }
+
+    public function save(array $options = []) {
+        $this->correctStatus();
+        
+        parent::save($options);
+    }
 }

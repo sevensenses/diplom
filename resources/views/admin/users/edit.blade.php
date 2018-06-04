@@ -2,11 +2,6 @@
 
 @section('admin-content')
 
-<!-- Breadcrumbs-->
-<ol class="breadcrumb">
-    {{ Breadcrumbs::render('users.edit', $user) }}
-</ol>
-
 {!! Form::open(['route' => ['admin.users.update', $user->id], 'method' => 'put']) !!}
 
     {!! Form::token() !!}

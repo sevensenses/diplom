@@ -15,7 +15,7 @@ class BreadcrumbsServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        require_once (base_path('breadcrumbs/admin.php'));
+        // require_once (base_path('breadcrumbs/admin.php'));
     }
 
     /**
@@ -25,6 +25,6 @@ class BreadcrumbsServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('breadcrumbs', BreadcrumbsManager::class);
+        // $this->app->singleton('breadcrumbs', BreadcrumbsManager::class);
     }
 }

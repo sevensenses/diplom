@@ -9,6 +9,15 @@ use App\QuestionStatus;
 
 class CategoryQuestionController extends Controller
 {
+    protected $breadcrumbsManager;
+
+    function __construct (BreadcrumbsManager $breadcrumbsManager) {
+        $this->breadcrumbsManager = $breadcrumbsManager;
+
+        $this->breadcrumbsManager->push('Панель управления', route('admin.dashboard'));
+        $this->breadcrumbsManager->push('Категории', route('admin.categories.index'));
+    }
+    
     public function index($categoryId) {
         $questions = Question::with(['status','category'])
             ->where('category_id', $categoryId)
@@ -17,6 +26,7 @@ class CategoryQuestionController extends Controller
     	return view('admin.questions.index', [
     		'pagetitle' => 'Список вопросов',
     		'questions' =>  $questions,
+            'breadcrumbs' => $this->breadcrumbsManager->render(),
     	]);
     }
 

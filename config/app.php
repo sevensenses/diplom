@@ -177,7 +177,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
-        App\Providers\BreadcrumbsServiceProvider::class,
+        // App\Providers\BreadcrumbsServiceProvider::class,
 
     ],
 
@@ -198,7 +198,7 @@ return [
         'Artisan' => Illuminate\Support\Facades\Artisan::class,
         'Auth' => Illuminate\Support\Facades\Auth::class,
         'Blade' => Illuminate\Support\Facades\Blade::class,
-        'Breadcrumbs' => App\Breadcrumbs\Breadcrumbs::class,
+        // 'Breadcrumbs' => App\Breadcrumbs\Breadcrumbs::class,
         'Broadcast' => Illuminate\Support\Facades\Broadcast::class,
         'Bus' => Illuminate\Support\Facades\Bus::class,
         'Cache' => Illuminate\Support\Facades\Cache::class,

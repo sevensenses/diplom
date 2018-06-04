@@ -2,34 +2,31 @@
 
 namespace App\Breadcrumbs;
 
-use Illuminate\Support\HtmlString;
-
 class BreadCrumbsManager {
 
-	protected $callbacks = [];
-
-	protected $generator;
+	protected $breadcrumbs = [];
 
 	public function __construct(BreadcrumbsGenerator $generator) {
-		$this->generator = $generator;
+		$this->breadcrumbs = collect();
 	}
 
-	public function for(string $alias, callable $callback) {
-		$this->callbacks[$alias] = $callback;
+	public function push(string $title, string $url, array $data = []) {
+		$this->breadcrumbs->push((object) array_merge($data, array (
+			'title' => $title,
+			'url' => $url,
+		)));
 	}
 
-	public function view(string $view, string $alias, ...$params) {
-		$breadcrumbs = $this->generator->generate($this->callbacks, $alias, $params);
-
-		$html = view($view, compact('breadcrumbs'))->render();
-
-		return new HtmlString($html);
+	public function view(string $view) {
+		$breadcrumbs = $this->breadcrumbs;
+		
+		return view($view, compact('breadcrumbs'));
 	}
 
-	public function render(string $alias, ...$params) {
+	public function render() {
 		$view = config('breadcrumbs.view');
 
-		return $this->view($view, $alias, ...$params);
+		return $this->view($view);
 	}
 
 }

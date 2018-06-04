@@ -2,11 +2,6 @@
 
 @section('admin-content')
 
-<!-- Breadcrumbs-->
-<ol class="breadcrumb">
-    {{ Breadcrumbs::render('questions.create') }}
-</ol>
-
 {!! Form::open(['route' => 'admin.questions.store']) !!}
 
     {!! Form::token() !!}

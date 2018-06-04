@@ -37,11 +37,11 @@
 
   <div class="content-wrapper">
     <div class="container-fluid">
-      @section('admin-content')
       <!-- Breadcrumbs-->
       <ol class="breadcrumb">
-        {{ Breadcrumbs::render('dashboard') }}
+        {!! $breadcrumbs !!}
       </ol>
+      @section('admin-content')
       <!-- Icon Cards-->
       <div class="row">
         <div class="col-xl-3 col-sm-6 mb-3">

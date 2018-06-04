@@ -14,16 +14,10 @@ class Category extends Model
     	return $this->hasMany('App\Question');
     }
 
-    public function newQuestions() {
-    	return $this->hasMany('App\Question')->new();
-    }
-
-    public function hiddenQuestions() {
-    	return $this->hasMany('App\Question')->hidden();
-    }
-
-    public function publishedQuestions() {
-    	return $this->hasMany('App\Question')->published();
+    public function scopeWithOnlyPublishedQuestions($query) {
+    	return $query->whereHas('questions', function ($query) {
+    		return $query->published();
+    	});
     }
 
     public function scopeActive($query) {

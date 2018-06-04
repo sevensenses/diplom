@@ -7,15 +7,26 @@ use App\Category;
 use App\QuestionStatus;
 use App\Http\Requests\StoreQuestion;
 use App\Http\Requests\UpdateQuestion;
+use App\Breadcrumbs\BreadcrumbsManager;
 
 class QuestionController extends Controller
 {
+    protected $breadcrumbsManager;
+
+    function __construct (BreadcrumbsManager $breadcrumbsManager) {
+        $this->breadcrumbsManager = $breadcrumbsManager;
+
+        $this->breadcrumbsManager->push('Панель управления', route('admin.dashboard'));
+        $this->breadcrumbsManager->push('Вопросы', route('admin.questions.index'));;
+    }
+
     public function index() {
         $questions = Question::with(['status','category'])->get();
 
     	return view('admin.questions.index', [
     		'pagetitle' => 'Список вопросов',
     		'questions' => $questions,
+            'breadcrumbs' => $this->breadcrumbsManager->render(),
     	]);
     }
 
@@ -25,10 +36,13 @@ class QuestionController extends Controller
         return view('admin.questions.index', [
             'pagetitle' => 'Список вопросов',
             'questions' => $questions,
+            'breadcrumbs' => $this->breadcrumbsManager->render(),
         ]);
     }
 
     public function create() {
+        $this->breadcrumbsManager->push('Создать', route('admin.questions.create'));
+        
         $categories = Category::pluck('name', 'id');
         $statuses = QuestionStatus::pluck('name', 'id');
 
@@ -36,21 +50,22 @@ class QuestionController extends Controller
     		'pagetitle' => 'Создать вопрос',
     		'categories' => $categories,
             'statuses' => $statuses,
+            'breadcrumbs' => $this->breadcrumbsManager->render(),
     	]);
     }
 
     public function store(StoreQuestion $request) {
         $questionData = $request->all();
 
-    	$question = new Question($questionData);
-        $question->correctStatus();
-        $question->save();
+    	$question = Question::create($questionData);
 
     	return redirect()->route('admin.questions.edit', $question->id)
     		->with('success', 'Вопрос успешно создан');
     }
 
     public function edit(Question $question) {
+        $this->breadcrumbsManager->push('Редактировать', route('admin.questions.edit', $question));
+        
         $categories = Category::pluck('name', 'id');
         $statuses = QuestionStatus::pluck('name', 'id');
 
@@ -59,6 +74,7 @@ class QuestionController extends Controller
             'question' => $question,
             'categories' => $categories,
             'statuses' => $statuses,
+            'breadcrumbs' => $this->breadcrumbsManager->render(),
     	]);
     }
 
@@ -66,7 +82,6 @@ class QuestionController extends Controller
         $questionData = $request->all();
 
     	$question->fill($questionData);
-        $question->correctStatus();
     	$question->save();
 
     	return redirect()->route('admin.questions.edit', $question->id)
