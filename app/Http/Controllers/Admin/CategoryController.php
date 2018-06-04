@@ -20,19 +20,29 @@ class CategoryController extends Controller
     }
 
     public function index() {
-        $categories = Category::with(['questions'])->get()->map(function ($category) {
-            $category->questions_count = $category->questions->count();
+        // $categories = Category::with(['questions'])->get()->map(function ($category) {
+        //     $category->questions_count = $category->questions->count();
 
-            $category->new_questions_count = $category->questions->filter(function ($question) {
-                return $question->isNew();
-            })->count();
+        //     $category->new_questions_count = $category->questions->filter(function ($question) {
+        //         return $question->isNew();
+        //     })->count();
 
-            $category->hidden_questions_count = $category->questions->filter(function ($question) {
-                return $question->isHidden();
-            })->count();
+        //     $category->hidden_questions_count = $category->questions->filter(function ($question) {
+        //         return $question->isHidden();
+        //     })->count();
 
-            return $category;
-        });
+        //     return $category;
+        // });
+
+        $categories = Category::withCount([
+            'questions',
+            'questions as new_questions_count' => function ($query) {
+                $query->new();
+            },
+            'questions as hidden_questions_count' => function ($query) {
+                $query->hidden();
+            },
+        ])->get();
 
     	return view('admin.categories.index', [
     		'pagetitle' => 'Список категорий',
